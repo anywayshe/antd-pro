@@ -1,20 +1,25 @@
+import { uploadFile } from '@/services/common';
+
 export default {
   namespace: 'global',
 
   state: {
-    collapsed: false
+    collapsed: false,
   },
 
-  effects: {},
+  effects: {
+    *upload({ payload, callback }, { call }) {
+      const response = yield call(uploadFile, payload);
+      callback(response);
+    },
+  },
 
   reducers: {
-    changeLayoutCollapsed(state, {
-      payload
-    }) {
+    changeLayoutCollapsed(state, { payload }) {
       return {
         ...state,
         collapsed: payload,
       };
-    }
+    },
   },
 };

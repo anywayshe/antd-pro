@@ -1,12 +1,8 @@
 // eslint-disable
-import fetch from 'dva/fetch'
-import {
-  notification
-} from 'antd'
-import router from 'umi/router'
-import {
-  getToken
-} from '@/utils/auth'
+import fetch from 'dva/fetch';
+import { notification } from 'antd';
+import router from 'umi/router';
+import { getToken } from '@/utils/auth';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -24,87 +20,87 @@ const codeMessage = {
   502: '网关错误。',
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
-}
-const Methods = ['POST', 'PUT', 'DELETE']
+};
+const Methods = ['POST', 'PUT', 'DELETE'];
 const resCode = {
   success: '10000',
-  validToken: '990009'
-}
+  validToken: '990009',
+};
 const checkStatus = response => {
-  const {
-    status,
-    statusText
-  } = response
+  const { status, statusText } = response;
   if ([200].includes(status)) {
-    return response
+    return response;
   }
-  const errortext = codeMessage[status] || statusText
+  const errortext = codeMessage[status] || statusText;
   notification.error({
     message: `请求错误 ${response.status}`,
     description: errortext,
-  })
-  const error = new Error(errortext)
-  error.name = response.status
-  error.response = response
-  throw error
-}
+  });
+  const error = new Error(errortext);
+  error.name = response.status;
+  error.response = response;
+  throw error;
+};
 const checkResCode = response => {
-  const {
-    data,
-    code,
-    message
-  } = response
+  const { data, code, message } = response;
   if (code !== resCode.success) {
     if (code === resCode.validToken) {
       notification.error({
-        message: '登录过期'
-      })
-      router.push('/user/login')
+        message: '登录过期',
+      });
+      router.push('/user/login');
     } else {
       notification.error({
         message: '接口异常',
-        description: message
-      })
+        description: message,
+      });
     }
-    return ''
+    return '';
   }
-  return data
-}
+  return data;
+};
 
 function request(method, url, data) {
-  const newOptions = {}
+  const newOptions = {};
+  let params;
+  let option;
+  if (data instanceof FormData) {
+    option = {
+      token: getToken() ? getToken() : '',
+    };
+    params = data;
+  } else {
+    params = JSON.stringify(data);
+    option = {
+      'Content-Type': 'application/json',
+      token: getToken() ? getToken() : '',
+    };
+  }
   Object.assign(newOptions, {
     method,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'token': getToken() ? getToken() : ''
-    }
-  })
+    headers: option,
+  });
   if (Methods.includes(method)) {
     Object.assign(newOptions, {
-      body: JSON.stringify(data)
-    })
+      body: params,
+    });
   }
   return fetch(url, newOptions)
     .then(checkStatus)
     .then(response => {
-      return response.json()
+      return response.json();
     })
-    .then(checkResCode)
+    .then(checkResCode);
 }
 
 function post(url, data) {
-  const method = 'POST'
-  return request(method, url, data)
+  const method = 'POST';
+  return request(method, url, data);
 }
 
 function get(url) {
-  const method = 'GET'
-  return request(method, url)
+  const method = 'GET';
+  return request(method, url);
 }
-export default request
-export {
-  post,
-  get
-}
+export default request;
+export { post, get };

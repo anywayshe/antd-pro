@@ -1,109 +1,70 @@
-import {
-  login,
-  getInfo,
-  sendCode,
-  register
-} from '@/services/user';
-import {
-  removeToken
-} from '@/utils/auth';
-import router from 'umi/router'
-
+import router from 'umi/router';
+import { login, getInfo, sendCode, register } from '@/services/user';
+import { removeToken } from '@/utils/auth';
 
 export default {
   namespace: 'user',
 
   state: {
     currentUser: undefined,
-    userInfo: undefined
+    userInfo: undefined,
   },
 
   effects: {
-    * login({
-      payload,
-      callback
-    }, {
-      call,
-      put
-    }) {
+    *login({ payload, callback }, { call, put }) {
       const response = yield call(login, payload);
-      callback(response)
+      if (response) callback(response);
+      else return;
       yield put({
         type: 'saveCurrentUser',
         payload: response,
       });
     },
-    * getInfo({
-      payload
-    }, {
-      call,
-      put
-    }) {
+    *getInfo({ payload }, { call, put }) {
       const response = yield call(getInfo, payload);
       yield put({
         type: 'setInfo',
         payload: response,
       });
     },
-    * logout() {
-      removeToken()
-      yield(router.replace('/user/login'))
+    *logout() {
+      removeToken();
+      yield router.replace('/user/login');
     },
-    * send({
-      payload,
-      callback
-    }, {
-      call,
-    }) {
+    *send({ payload, callback }, { call }) {
       const response = yield call(sendCode, payload);
-      callback(response)
+      callback(response);
     },
-    * submit({
-      payload
-    }, {
-      call,
-      put
-    }) {
+    *submit({ payload }, { call, put }) {
       const response = yield call(register, payload);
       yield put({
         type: 'registerHandle',
         payload: response,
       });
     },
-    * result({
-      payload
-    }, {
-      call
-    }) {
-      console.log(payload)
+    *result({ payload }, { call }) {
       yield call(register, payload);
-    }
+    },
   },
 
   reducers: {
-    saveCurrentUser(state, {
-      payload
-    }) {
+    saveCurrentUser(state, { payload }) {
       return {
         ...state,
         currentUser: payload || {},
-      }
+      };
     },
-    setInfo(state, {
-      payload
-    }) {
+    setInfo(state, { payload }) {
       return {
         ...state,
         userInfo: payload || {},
-      }
+      };
     },
-    registerHandle(state, {
-      payload
-    }) {
+    registerHandle(state, { payload }) {
       return {
         ...state,
         status: payload.status,
       };
     },
-  }
+  },
 };

@@ -44,7 +44,6 @@ class HeaderView extends Component {
   handleMenuClick = ({ key }) => {
     const { dispatch } = this.props;
     if (key === 'logout') {
-      console.log('--dispatch');
       dispatch({
         type: 'user/logout',
       });
@@ -120,7 +119,7 @@ class HeaderView extends Component {
   }
 }
 
-export default connect(({ global, setting, loading }) => ({
+export default connect(({ global, setting }) => ({
   collapsed: global.collapsed,
   setting,
 }))(HeaderView);
