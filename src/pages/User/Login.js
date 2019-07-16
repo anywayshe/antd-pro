@@ -105,7 +105,7 @@ class LoginPage extends Component {
                   message: '请输入用户名!',
                 },
               ]}
-            />{' '}
+            />
             <Password
               name="password"
               placeholder="密码"
@@ -121,7 +121,7 @@ class LoginPage extends Component {
                 this.loginForm.validateFields(this.handleSubmit);
               }}
             />
-          </Tab>{' '}
+          </Tab>
           <Tab key="mobile" tab="手机号登录">
             <Mobile
               name="mobile"
@@ -136,7 +136,7 @@ class LoginPage extends Component {
                   message: '手机号格式错误！',
                 },
               ]}
-            />{' '}
+            />
             <Captcha
               name="captcha"
               placeholder="验证码"
@@ -151,11 +151,11 @@ class LoginPage extends Component {
                 },
               ]}
             />
-          </Tab>{' '}
+          </Tab>
           <div>
             <Checkbox checked={autoLogin} onChange={this.changeAutoLogin}>
               自动登录
-            </Checkbox>{' '}
+            </Checkbox>
             <a
               style={{
                 float: 'right',
@@ -164,8 +164,8 @@ class LoginPage extends Component {
             >
               忘记密码
             </a>
-          </div>{' '}
-          <Submit loading={submitting}> 登录</Submit>{' '}
+          </div>
+          <Submit loading={submitting}> 登录</Submit>
           <div className={styles.other}>
             <Link className={styles.register} to="/user/register">
               注册账户
